@@ -43,11 +43,16 @@ const signInUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const user = yield user_1.default.findOne({ where: { email: email } });
         if (user) {
             const hashPass = user.dataValues.password;
+            const resUser = {
+                name: user.dataValues.name,
+                email: user.dataValues.email,
+                role: user.dataValues.role
+            };
             yield bcrypt_1.default.compare(password, hashPass)
                 .then((result) => {
                 if (result) {
                     const token = jsonwebtoken_1.default.sign({ email: email }, process.env.SECRET_KEY);
-                    res.json({ token });
+                    res.json({ token, resUser });
                     /* para agreagar periodo de tiempo
                     jwt.sign({email:email},
                         process.env.SECRET_KEY!, {expiresIn:'10000'}) 10 segundos medidos en milis

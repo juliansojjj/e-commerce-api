@@ -41,12 +41,17 @@ export const signInUser = async (req:Request,res:Response)=>{
         const user = await User.findOne({where:{email:email}})
         if(user){
             const hashPass = user.dataValues.password;
+            const resUser = {
+                name: user.dataValues.name,
+                email:user.dataValues.email,
+                role:user.dataValues.role
+            }
             await bcrypt.compare(password,hashPass)
             .then((result:any)=>{
                 if(result){
                     const token = jwt.sign({email:email},
                         process.env.SECRET_KEY!)
-                    res.json({token});
+                    res.json({token,resUser});
                     
                     /* para agreagar periodo de tiempo
                     jwt.sign({email:email},
