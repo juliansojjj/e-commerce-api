@@ -49,14 +49,7 @@ export const signInUser = async (req:Request,res:Response)=>{
             await bcrypt.compare(password,hashPass)
             .then((result:any)=>{
                 if(result){
-                    const token = jwt.sign({email:email},
-                        process.env.SECRET_KEY!)
-                    res.json({token,resUser});
-                    
-                    /* para agreagar periodo de tiempo
-                    jwt.sign({email:email},
-                        process.env.SECRET_KEY!, {expiresIn:'10000'}) 10 segundos medidos en milis
-                    */
+                    res.json(resUser);  
                 }
                 else res.status(400).json({msg:'Contraseña incorrecta'})
             })

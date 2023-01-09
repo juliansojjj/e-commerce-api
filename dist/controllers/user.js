@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteUser = exports.getUsers = exports.signInUser = exports.addUser = void 0;
 const user_1 = __importDefault(require("../models/user"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const addUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, email, password } = req.body;
     if (!name.trim() || !email.trim() || !password.trim()) {
@@ -51,12 +50,7 @@ const signInUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             yield bcrypt_1.default.compare(password, hashPass)
                 .then((result) => {
                 if (result) {
-                    const token = jsonwebtoken_1.default.sign({ email: email }, process.env.SECRET_KEY);
-                    res.json({ token, resUser });
-                    /* para agreagar periodo de tiempo
-                    jwt.sign({email:email},
-                        process.env.SECRET_KEY!, {expiresIn:'10000'}) 10 segundos medidos en milis
-                    */
+                    res.json(resUser);
                 }
                 else
                     res.status(400).json({ msg: 'Contraseña incorrecta' });
