@@ -8,8 +8,10 @@ type Usuario = {
     name:string;
     email:string;
     password:string;
-    createdAt:string;
-    updatedAt:string;
+    role:string;
+    createdAt?:string;
+    updatedAt?:string;
+    oAuth:boolean;
 }
 
 export const addUser = async (req:Request,res:Response)=>{
@@ -25,7 +27,7 @@ export const addUser = async (req:Request,res:Response)=>{
         }
         else{
             const hashPass = await bcrypt.hash(password,10)
-            const user = await User.create({name,email,password:hashPass});
+            const user = await User.create({name,email,password:hashPass,oAuth:0});
             res.json({user});
         }
     }
@@ -42,6 +44,7 @@ export const signInUser = async (req:Request,res:Response)=>{
         if(user){
             const hashPass = user.dataValues.password;
             const resUser = {
+                id: user.dataValues.id,
                 name: user.dataValues.name,
                 email:user.dataValues.email,
                 role:user.dataValues.role
@@ -74,3 +77,32 @@ export const deleteUser = async (req:Request,res:Response)=>{
     }
     else { res.status(404).json({msg:'No existe ese usuario'})}
 } 
+
+export const oAuth = async(req:Request, res:Response)=>{
+    /* dos casos de REGISTRO
+    1- se registra con oAuth y YA tennia una cuenta con ese mail: va a vincular el usuario con el oauth. 
+    2- se registra con oAuth y NO tenia una cuenta antes: se crea una cuenta especial
+
+    ÚNICO caso de login
+    - verifica si existe la cuenta, SINO la crea, y vamos al paso de arriba
+    */ 
+    const {name,email} = req.body;
+
+        const user = await User.findOne({where:{email:email}})
+        if(user){
+            await user.update({oAuth:1})
+            .then(()=>res.json({
+                id: user.dataValues.id,
+                name: user.dataValues.name, 
+                email:user.dataValues.email, 
+                role:user.dataValues.role}));
+        }
+        else{
+            const user : any = await User.create({name,email,password:'@',oAuth:1, role:'client'});
+            res.json({
+                id: user.dataValues.id,
+                name: user.dataValues.name, 
+                email:user.dataValues.email, 
+                role:user.dataValues.role});
+        }
+}

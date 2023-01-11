@@ -17,6 +17,9 @@ const User = connection_1.default.define('User', {
     },
     role: {
         type: sequelize_1.DataTypes.STRING
+    },
+    oAuth: {
+        type: sequelize_1.DataTypes.BOOLEAN
     }
 });
 exports.default = User;

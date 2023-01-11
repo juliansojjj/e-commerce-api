@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUser = exports.getUsers = exports.signInUser = exports.addUser = void 0;
+exports.oAuth = exports.deleteUser = exports.getUsers = exports.signInUser = exports.addUser = void 0;
 const user_1 = __importDefault(require("../models/user"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const addUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -27,7 +27,7 @@ const addUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
         else {
             const hashPass = yield bcrypt_1.default.hash(password, 10);
-            const user = yield user_1.default.create({ name, email, password: hashPass });
+            const user = yield user_1.default.create({ name, email, password: hashPass, oAuth: 0 });
             res.json({ user });
         }
     }
@@ -43,6 +43,7 @@ const signInUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         if (user) {
             const hashPass = user.dataValues.password;
             const resUser = {
+                id: user.dataValues.id,
                 name: user.dataValues.name,
                 email: user.dataValues.email,
                 role: user.dataValues.role
@@ -78,4 +79,34 @@ const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.deleteUser = deleteUser;
+const oAuth = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    /* dos casos de REGISTRO
+    1- se registra con oAuth y YA tennia una cuenta con ese mail: va a vincular el usuario con el oauth.
+    2- se registra con oAuth y NO tenia una cuenta antes: se crea una cuenta especial
+
+    ÚNICO caso de login
+    - verifica si existe la cuenta, SINO la crea, y vamos al paso de arriba
+    */
+    const { name, email } = req.body;
+    const user = yield user_1.default.findOne({ where: { email: email } });
+    if (user) {
+        yield user.update({ oAuth: 1 })
+            .then(() => res.json({
+            id: user.dataValues.id,
+            name: user.dataValues.name,
+            email: user.dataValues.email,
+            role: user.dataValues.role
+        }));
+    }
+    else {
+        const user = yield user_1.default.create({ name, email, password: '@', oAuth: 1, role: 'client' });
+        res.json({
+            id: user.dataValues.id,
+            name: user.dataValues.name,
+            email: user.dataValues.email,
+            role: user.dataValues.role
+        });
+    }
+});
+exports.oAuth = oAuth;
 //# sourceMappingURL=user.js.map

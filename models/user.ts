@@ -13,6 +13,9 @@ const User = db.define('User',{
     },
     role:{
         type:DataTypes.STRING
+    },
+    oAuth:{
+        type:DataTypes.BOOLEAN
     }
 
 });

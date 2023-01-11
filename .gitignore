@@ -2,3 +2,6 @@
 db/connection.ts
 dist/db/connection.js
 dist/db/connection.js.map
+db/connection.ts
+dist/db/connection.js
+dist/db/connection.js.map
