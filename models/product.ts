@@ -11,7 +11,7 @@ const Product = db.define('Product',{
     measures:{
         type:DataTypes.STRING
     },
-    color:{
+    type:{
         type:DataTypes.STRING
     },
     price:{

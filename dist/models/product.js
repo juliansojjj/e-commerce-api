@@ -15,7 +15,7 @@ const Product = connection_1.default.define('Product', {
     measures: {
         type: sequelize_1.DataTypes.STRING
     },
-    color: {
+    type: {
         type: sequelize_1.DataTypes.STRING
     },
     price: {
