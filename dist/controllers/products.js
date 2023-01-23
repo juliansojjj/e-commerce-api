@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteProduct = exports.putProduct = exports.postProduct = exports.getProduct = exports.getProducts = void 0;
+exports.deleteProduct = exports.putProduct = exports.postProduct = exports.getProductByType = exports.getProduct = exports.getProducts = void 0;
 const product_1 = __importDefault(require("../models/product"));
 const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const products = yield product_1.default.findAll();
@@ -21,6 +21,7 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.getProducts = getProducts;
 const getProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
+    console.log(id);
     const product = yield product_1.default.findByPk(id);
     if (product) {
         res.json({ product });
@@ -30,6 +31,20 @@ const getProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.getProduct = getProduct;
+const getProductByType = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { name } = req.params;
+    const array = name.split('-');
+    const type = array[0];
+    const id = array[1];
+    const product = yield product_1.default.findOne({ where: { id: id, type: type } });
+    if (product) {
+        res.json({ product });
+    }
+    else {
+        res.status(404).json({ msg: "No existe ese usuario" });
+    }
+});
+exports.getProductByType = getProductByType;
 const postProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { body } = req;
     if (!body.serialNumber.trim()) {

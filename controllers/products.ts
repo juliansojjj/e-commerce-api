@@ -1,4 +1,5 @@
 import { request, Request, Response } from "express";
+import { Sequelize } from "sequelize";
 import Product from "../models/product";
 
 export const getProducts = async(req:Request, res:Response)=>{
@@ -10,6 +11,7 @@ export const getProducts = async(req:Request, res:Response)=>{
 export const getProduct = async (req:Request, res:Response)=>{
 
     const { id } = req.params;
+    console.log(id)
   const product = await Product.findByPk(id);
 
   if (product) {
@@ -19,6 +21,19 @@ export const getProduct = async (req:Request, res:Response)=>{
   }
 }
 
+export const getProductByType = async (req:Request, res:Response)=>{
+  const { name } = req.params;
+  const array = name.split('-')
+  const type = array[0];
+  const id = array[1];
+  
+  const product = await Product.findOne({where:{id:id, type:type}})
+  if (product) {
+    res.json({ product });
+  } else {
+    res.status(404).json({ msg: "No existe ese usuario" });
+  }
+}
 export const postProduct = async (req:Request, res:Response)=>{
 
     const {body} = req;

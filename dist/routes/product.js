@@ -6,6 +6,7 @@ const products_1 = require("../controllers/products");
 exports.router = (0, express_1.Router)();
 exports.router.get('/', products_1.getProducts);
 exports.router.get('/:id', products_1.getProduct);
+exports.router.get('/model/:name', products_1.getProductByType);
 exports.router.post('/', products_1.postProduct);
 exports.router.put('/:id', products_1.putProduct);
 exports.router.delete('/:id', products_1.deleteProduct);
