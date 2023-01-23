@@ -1,6 +1,7 @@
 import express from 'express';
 import productRoutes from '../routes/product'
 import userRoutes from '../routes/user'
+import favoriteRoutes from '../routes/favorite'
 import cors from 'cors';
 import db from '../db/connection';
 
@@ -9,7 +10,8 @@ export default class Server{
     private port : string;
     private paths = {
         products:'/api/products',
-        users:'/api/users'
+        users:'/api/users',
+        favorites:'/api/favorites'
     }
 
     constructor(){
@@ -41,9 +43,9 @@ export default class Server{
     }
 
     routes(){
-        //CREO que acá podriamos poner varias lineas de estas, combinadas con paths de arriba, para crear distintos entrypoints
         this.app.use(this.paths.products, productRoutes);
         this.app.use(this.paths.users, userRoutes);
+        this.app.use(this.paths.favorites, favoriteRoutes);
     }
     
     listen(){

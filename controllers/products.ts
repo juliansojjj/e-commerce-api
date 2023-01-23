@@ -1,10 +1,11 @@
 import { request, Request, Response } from "express";
-import { Sequelize } from "sequelize";
+import Favorite from "../models/favorite";
 import Product from "../models/product";
 
 export const getProducts = async(req:Request, res:Response)=>{
     const products = await Product.findAll();
-    
+    const favorites = await Favorite.findAll();
+    console.log(favorites)
     res.json(products);
 }
 

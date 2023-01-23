@@ -13,9 +13,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteProduct = exports.putProduct = exports.postProduct = exports.getProductByType = exports.getProduct = exports.getProducts = void 0;
+const favorite_1 = __importDefault(require("../models/favorite"));
 const product_1 = __importDefault(require("../models/product"));
 const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const products = yield product_1.default.findAll();
+    const favorites = yield favorite_1.default.findAll();
+    console.log(favorites);
     res.json(products);
 });
 exports.getProducts = getProducts;

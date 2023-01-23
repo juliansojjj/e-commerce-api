@@ -15,13 +15,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const product_1 = __importDefault(require("../routes/product"));
 const user_1 = __importDefault(require("../routes/user"));
+const favorite_1 = __importDefault(require("../routes/favorite"));
 const cors_1 = __importDefault(require("cors"));
 const connection_1 = __importDefault(require("../db/connection"));
 class Server {
     constructor() {
         this.paths = {
             products: '/api/products',
-            users: '/api/users'
+            users: '/api/users',
+            favorites: '/api/favorites'
         };
         this.app = (0, express_1.default)();
         this.port = process.env.PORT || '8000';
@@ -49,9 +51,9 @@ class Server {
         this.app.use(express_1.default.static('public')); //nombre de carpeta
     }
     routes() {
-        //CREO que acá podriamos poner varias lineas de estas, combinadas con paths de arriba, para crear distintos entrypoints
         this.app.use(this.paths.products, product_1.default);
         this.app.use(this.paths.users, user_1.default);
+        this.app.use(this.paths.favorites, favorite_1.default);
     }
     listen() {
         this.app.listen(this.port, () => {
