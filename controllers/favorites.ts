@@ -13,6 +13,24 @@ export const getUserFavorites = async (req:Request, res:Response)=>{
     res.status(404).json({ msg: "No existe ese usuario" });
   }
 }
+
+export const getItemFavorites = async (req:Request, res:Response)=>{
+
+  const { id } = req.params;
+    const data = id.split('-')
+    const user_id = data[0]
+    const item_id = data[1]
+    console.log(user_id,item_id)
+  
+const favorite = await Favorite.findOne({where:{user_id:user_id,item_id:item_id}});
+
+if (favorite) {
+  res.json('TRUE');
+} else {
+  res.status(404).json('FALSE');
+}
+}
+
 export const postFavorite = async (req:Request, res:Response)=>{
 
     const {body} = req;

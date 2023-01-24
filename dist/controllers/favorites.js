@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteFavorite = exports.postFavorite = exports.getUserFavorites = void 0;
+exports.deleteFavorite = exports.postFavorite = exports.getItemFavorites = exports.getUserFavorites = void 0;
 const favorite_1 = __importDefault(require("../models/favorite"));
 const getUserFavorites = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
@@ -25,6 +25,21 @@ const getUserFavorites = (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.getUserFavorites = getUserFavorites;
+const getItemFavorites = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const data = id.split('-');
+    const user_id = data[0];
+    const item_id = data[1];
+    console.log(user_id, item_id);
+    const favorite = yield favorite_1.default.findOne({ where: { user_id: user_id, item_id: item_id } });
+    if (favorite) {
+        res.json('TRUE');
+    }
+    else {
+        res.status(404).json('FALSE');
+    }
+});
+exports.getItemFavorites = getItemFavorites;
 const postFavorite = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { body } = req;
     if (!body.user_id || !body.item_id)
