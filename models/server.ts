@@ -2,6 +2,7 @@ import express from 'express';
 import productRoutes from '../routes/product'
 import userRoutes from '../routes/user'
 import favoriteRoutes from '../routes/favorite'
+import checkoutRoutes from '../routes/checkout'
 import cors from 'cors';
 import db from '../db/connection';
 
@@ -11,7 +12,8 @@ export default class Server{
     private paths = {
         products:'/api/products',
         users:'/api/users',
-        favorites:'/api/favorites'
+        favorites:'/api/favorites',
+        checkout:'/api/checkout'
     }
 
     constructor(){
@@ -46,6 +48,7 @@ export default class Server{
         this.app.use(this.paths.products, productRoutes);
         this.app.use(this.paths.users, userRoutes);
         this.app.use(this.paths.favorites, favoriteRoutes);
+        this.app.use(this.paths.checkout, checkoutRoutes);
     }
     
     listen(){

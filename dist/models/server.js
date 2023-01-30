@@ -16,6 +16,7 @@ const express_1 = __importDefault(require("express"));
 const product_1 = __importDefault(require("../routes/product"));
 const user_1 = __importDefault(require("../routes/user"));
 const favorite_1 = __importDefault(require("../routes/favorite"));
+const checkout_1 = __importDefault(require("../routes/checkout"));
 const cors_1 = __importDefault(require("cors"));
 const connection_1 = __importDefault(require("../db/connection"));
 class Server {
@@ -23,7 +24,8 @@ class Server {
         this.paths = {
             products: '/api/products',
             users: '/api/users',
-            favorites: '/api/favorites'
+            favorites: '/api/favorites',
+            checkout: '/api/checkout'
         };
         this.app = (0, express_1.default)();
         this.port = process.env.PORT || '8000';
@@ -54,6 +56,7 @@ class Server {
         this.app.use(this.paths.products, product_1.default);
         this.app.use(this.paths.users, user_1.default);
         this.app.use(this.paths.favorites, favorite_1.default);
+        this.app.use(this.paths.checkout, checkout_1.default);
     }
     listen() {
         this.app.listen(this.port, () => {
