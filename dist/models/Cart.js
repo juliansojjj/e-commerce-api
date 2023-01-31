@@ -17,4 +17,4 @@ const Cart = connection_1.default.define('Cart', {
     }
 });
 exports.default = Cart;
-//# sourceMappingURL=Cart.js.map
+//# sourceMappingURL=cart.js.map

@@ -13,10 +13,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteCartItem = exports.updateCartItemAmount = exports.postItemToCart = exports.getUserCart = void 0;
-const Cart_1 = __importDefault(require("../models/Cart"));
+const cart_1 = __importDefault(require("../models/cart"));
 const getUserCart = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const cart = yield Cart_1.default.findAll({ where: { user_id: id } });
+    const cart = yield cart_1.default.findAll({ where: { user_id: id } });
     if (cart) {
         res.json({ cart });
     }
@@ -31,7 +31,7 @@ const postItemToCart = (req, res) => __awaiter(void 0, void 0, void 0, function*
         res.status(400).json('Rellene los campos de usuario e item');
     else
         try {
-            const cart = yield Cart_1.default.create(body);
+            const cart = yield cart_1.default.create(body);
             res.json({ cart });
         }
         catch (err) {
@@ -48,7 +48,7 @@ const updateCartItemAmount = (req, res) => __awaiter(void 0, void 0, void 0, fun
     const item_id = data[1];
     console.log(user_id, item_id);
     try {
-        const cart = yield Cart_1.default.findOne({ where: { user_id: user_id, item_id: item_id } });
+        const cart = yield cart_1.default.findOne({ where: { user_id: user_id, item_id: item_id } });
         if (cart) {
             yield cart.update(body)
                 .then(() => res.json(cart));
@@ -68,7 +68,7 @@ const deleteCartItem = (req, res) => __awaiter(void 0, void 0, void 0, function*
     const item_id = data[1];
     console.log(user_id, item_id);
     try {
-        const cart = yield Cart_1.default.findOne({ where: { user_id: user_id, item_id: item_id } });
+        const cart = yield cart_1.default.findOne({ where: { user_id: user_id, item_id: item_id } });
         if (cart) {
             cart.destroy().then(() => res.json(cart));
         }
