@@ -12,8 +12,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteCartItem = exports.updateCartItemAmount = exports.postItemToCart = exports.getUserCart = void 0;
+exports.deleteAddress = exports.updateAddress = exports.postAddress = exports.getOldAddress = exports.getUserAddresses = exports.deleteCartItem = exports.updateCartItemAmount = exports.postItemToCart = exports.getUserCart = void 0;
 const cart_1 = __importDefault(require("../models/cart"));
+const address_1 = __importDefault(require("../models/address"));
+/*
+- Cart controllers
+- Address controllers
+- Order controllers
+*/
+//----------CART----------
 const getUserCart = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const cart = yield cart_1.default.findAll({ where: { user_id: id } });
@@ -80,4 +87,89 @@ const deleteCartItem = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.deleteCartItem = deleteCartItem;
+//----------Address----------
+const getUserAddresses = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const address = yield address_1.default.findAll({ where: { user_id: id } });
+    if (address) {
+        res.json({ address });
+    }
+    else {
+        res.status(404).json({ msg: "No tiene direcciones" });
+    }
+});
+exports.getUserAddresses = getUserAddresses;
+const getOldAddress = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const address = yield address_1.default.findByPk(id);
+    if (address) {
+        res.json({ address });
+    }
+    else {
+        res.status(404).json({ msg: "No tiene direcciones" });
+    }
+});
+exports.getOldAddress = getOldAddress;
+const postAddress = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { body } = req;
+    if (!body.user_id
+        || !body.name_surname
+        || !body.phone
+        || !body.province
+        || !body.postal_code
+        || !body.street
+        || !body.number)
+        res.status(400).json('Rellene los campos');
+    else
+        try {
+            const address = yield address_1.default.create(body);
+            res.json({ address });
+        }
+        catch (err) {
+            console.log(err);
+            res.status(500).json({ msg: "Revise the error" });
+        }
+});
+exports.postAddress = postAddress;
+const updateAddress = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { body } = req;
+    const { id } = req.params;
+    if (!body.user_id
+        || !body.name_surname
+        || !body.phone
+        || !body.province
+        || !body.postal_code
+        || !body.street
+        || !body.number)
+        res.status(400).json('Rellene los campos');
+    else
+        try {
+            const address = yield address_1.default.findByPk(id);
+            if (address) {
+                yield address.update(body)
+                    .then(() => res.json(address));
+            }
+            else
+                return res.status(404).json({ msg: 'Este producto no estaba en su carrito' });
+        }
+        catch (err) {
+            console.log(err);
+        }
+});
+exports.updateAddress = updateAddress;
+const deleteAddress = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    try {
+        const address = yield address_1.default.findByPk(id);
+        if (address) {
+            address.destroy().then(() => res.json(address));
+        }
+        else
+            return res.status(404).json({ msg: 'No existe esa dirección' });
+    }
+    catch (err) {
+        console.log(err);
+    }
+});
+exports.deleteAddress = deleteAddress;
 //# sourceMappingURL=checkout.js.map
