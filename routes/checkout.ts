@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { getUserCart, postItemToCart, deleteCartItem, updateCartItemAmount} from '../controllers/checkout';
 import { getUserAddresses, postAddress, deleteAddress, getOldAddress, updateAddress } from "../controllers/checkout";
+import {postAfterOrder, } from "../controllers/checkout";
 
 export const router = Router();
 
@@ -14,5 +15,7 @@ router.get('/address/old/:id', getOldAddress);
 router.post('/address', postAddress);
 router.put('/address/:id', updateAddress);
 router.delete('/address/:id', deleteAddress);
+
+router.post('/order/after/:id', postAfterOrder);
 
 export default router;

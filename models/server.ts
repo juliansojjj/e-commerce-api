@@ -3,6 +3,7 @@ import productRoutes from '../routes/product'
 import userRoutes from '../routes/user'
 import favoriteRoutes from '../routes/favorite'
 import checkoutRoutes from '../routes/checkout'
+import orderRoutes from '../routes/order'
 import cors from 'cors';
 import db from '../db/connection';
 
@@ -13,7 +14,8 @@ export default class Server{
         products:'/api/products',
         users:'/api/users',
         favorites:'/api/favorites',
-        checkout:'/api/checkout'
+        checkout:'/api/checkout',
+        orders:'/api/orders'
     }
 
     constructor(){
@@ -49,6 +51,7 @@ export default class Server{
         this.app.use(this.paths.users, userRoutes);
         this.app.use(this.paths.favorites, favoriteRoutes);
         this.app.use(this.paths.checkout, checkoutRoutes);
+        this.app.use(this.paths.orders, orderRoutes);
     }
     
     listen(){

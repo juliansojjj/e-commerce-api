@@ -7,10 +7,13 @@ const sequelize_1 = require("sequelize");
 const connection_1 = __importDefault(require("../db/connection"));
 const Cart = connection_1.default.define('Cart', {
     user_id: {
-        type: sequelize_1.DataTypes.NUMBER
+        type: sequelize_1.DataTypes.NUMBER,
     },
     item_id: {
         type: sequelize_1.DataTypes.NUMBER
+    },
+    order_id: {
+        type: sequelize_1.DataTypes.STRING
     },
     amount: {
         type: sequelize_1.DataTypes.NUMBER

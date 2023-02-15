@@ -17,4 +17,4 @@ exports.router.put('/address/:id', checkout_2.updateAddress);
 exports.router.delete('/address/:id', checkout_2.deleteAddress);
 exports.router.post('/order/after/:id', checkout_3.postAfterOrder);
 exports.default = exports.router;
-//# sourceMappingURL=checkout.js.map
+//# sourceMappingURL=checkout%20copy.js.map

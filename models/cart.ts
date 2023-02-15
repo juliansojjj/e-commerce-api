@@ -3,10 +3,13 @@ import db from '../db/connection';
 
 const Cart = db.define('Cart',{
     user_id:{
-        type:DataTypes.NUMBER
+        type:DataTypes.NUMBER,
     },
     item_id:{
         type:DataTypes.NUMBER
+    },
+    order_id:{
+        type:DataTypes.STRING
     },
     amount:{
         type:DataTypes.NUMBER

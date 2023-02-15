@@ -25,7 +25,7 @@ const product_1 = __importDefault(require("../models/product"));
 //----------CART----------
 const getUserCart = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const cart = yield cart_1.default.findAll({ where: { user_id: id, order_id: '0' } });
+    const cart = yield cart_1.default.findAll({ where: { user_id: id } });
     if (cart) {
         res.json({ cart });
     }
@@ -175,7 +175,7 @@ const deleteAddress = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.deleteAddress = deleteAddress;
-//----------Orders (ÚNICAMENTE creacion)----------
+//----------Orders----------
 const postAfterOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { body } = req;
     const { id } = req.params;
@@ -193,23 +193,22 @@ const postAfterOrder = (req, res) => __awaiter(void 0, void 0, void 0, function*
         //comprobacion precios y cantidades
         let totalPrice = 0;
         Promise.all(body.items.map((unit) => {
-            const promise = new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
+            const fun = new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
                 yield cart_1.default.update({ order_id: body.id }, { where: { user_id: id, item_id: unit.productId } });
                 const product = yield product_1.default.findByPk(unit.productId);
-                //elimina stock del item
-                yield (product === null || product === void 0 ? void 0 : product.update({ stock: product.dataValues.stock - unit.amount }));
                 const itemPrice = unit.amount * (product === null || product === void 0 ? void 0 : product.dataValues.price);
-                //suma precio por item al total
                 totalPrice += itemPrice;
                 resolve(true);
             }));
-            return promise;
+            return fun;
         }))
             .then(() => __awaiter(void 0, void 0, void 0, function* () {
+            console.log(`DESPUES de primer${totalPrice}`);
             if (totalPrice && body.send_option !== 'local') {
                 const userAddress = yield address_1.default.findByPk(body.address_id);
                 const userPostalCode = userAddress === null || userAddress === void 0 ? void 0 : userAddress.dataValues.postal_code;
                 const sendPrice = yield fetchSendPrice(userPostalCode);
+                console.log(`evnio:${sendPrice}`);
                 totalPrice += sendPrice;
                 try {
                     const order = yield order_1.default.create({
@@ -262,4 +261,4 @@ const fetchSendPrice = (userPostalCode) => __awaiter(void 0, void 0, void 0, fun
     });
     return sendPrice;
 });
-//# sourceMappingURL=checkout.js.map
+//# sourceMappingURL=checkout%20copy.js.map
