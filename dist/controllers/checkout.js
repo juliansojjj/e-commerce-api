@@ -40,7 +40,7 @@ const postItemToCart = (req, res) => __awaiter(void 0, void 0, void 0, function*
         res.status(400).json('Rellene los campos de usuario e item');
     else
         try {
-            const cart = yield cart_1.default.create(body);
+            const cart = yield cart_1.default.create(Object.assign(Object.assign({}, body), { order_id: '0' }));
             res.json({ cart });
         }
         catch (err) {
@@ -57,7 +57,7 @@ const updateCartItemAmount = (req, res) => __awaiter(void 0, void 0, void 0, fun
     const item_id = data[1];
     console.log(user_id, item_id);
     try {
-        const cart = yield cart_1.default.findOne({ where: { user_id: user_id, item_id: item_id } });
+        const cart = yield cart_1.default.findOne({ where: { user_id: user_id, item_id: item_id, order_id: '0' } });
         if (cart) {
             yield cart.update(body)
                 .then(() => res.json(cart));
@@ -194,14 +194,14 @@ const postAfterOrder = (req, res) => __awaiter(void 0, void 0, void 0, function*
         let totalPrice = 0;
         Promise.all(body.items.map((unit) => {
             const promise = new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
-                yield cart_1.default.update({ order_id: body.id }, { where: { user_id: id, item_id: unit.productId } });
+                const cart = yield cart_1.default.findOne({ where: { user_id: id, item_id: unit.productId, order_id: '0' } });
                 const product = yield product_1.default.findByPk(unit.productId);
-                //elimina stock del item
-                yield (product === null || product === void 0 ? void 0 : product.update({ stock: product.dataValues.stock - unit.amount }));
-                const itemPrice = unit.amount * (product === null || product === void 0 ? void 0 : product.dataValues.price);
-                //suma precio por item al total
-                totalPrice += itemPrice;
-                resolve(true);
+                yield (cart === null || cart === void 0 ? void 0 : cart.update({ order_id: body.id }).then(() => __awaiter(void 0, void 0, void 0, function* () { return yield (product === null || product === void 0 ? void 0 : product.update({ stock: product.dataValues.stock - unit.amount })); })).then(() => {
+                    const itemPrice = unit.amount * (product === null || product === void 0 ? void 0 : product.dataValues.price);
+                    //suma precio por item al total
+                    totalPrice += itemPrice;
+                    resolve(true);
+                }));
             }));
             return promise;
         }))

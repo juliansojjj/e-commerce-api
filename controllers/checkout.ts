@@ -31,7 +31,7 @@ export const postItemToCart = async (req:Request, res:Response)=>{
   const {body} = req;
     if(!body.user_id || !body.item_id) res.status(400).json('Rellene los campos de usuario e item')
     else try {
-        const cart = await Cart.create(body);
+        const cart = await Cart.create({...body,order_id:'0'});
         res.json({cart});
         
     } catch (err) {
@@ -50,7 +50,7 @@ export const updateCartItemAmount = async (req:Request, res:Response)=>{
   console.log(user_id,item_id)
   
 try{
-  const cart = await Cart.findOne({where:{user_id:user_id,item_id:item_id}});
+  const cart = await Cart.findOne({where:{user_id:user_id,item_id:item_id, order_id:'0'}});
   if (cart){
     await cart.update(body)
     .then(()=>res.json(cart));
@@ -191,14 +191,18 @@ export const postAfterOrder = async (req:Request, res:Response)=>{
     let totalPrice = 0;
     Promise.all(body.items.map((unit:any)=>{
       const promise = new Promise(async(resolve) => {
-        await Cart.update({order_id:body.id},{where:{user_id:id,item_id:unit.productId}})
+        const cart = await Cart.findOne({where:{user_id:id,item_id:unit.productId, order_id:'0'}})
         const product = await Product.findByPk(unit.productId);
+        await cart?.update({order_id:body.id})
         //elimina stock del item
-        await product?.update({stock:product.dataValues.stock - unit.amount})
-        const itemPrice = unit.amount * product?.dataValues.price
-        //suma precio por item al total
-        totalPrice += itemPrice
-        resolve(true)
+        .then(async()=>await product?.update({stock:product.dataValues.stock - unit.amount}))
+        .then(()=>{
+          const itemPrice = unit.amount * product?.dataValues.price
+          //suma precio por item al total
+          totalPrice += itemPrice
+          resolve(true)
+        })
+        
       })
       return promise
     }))
