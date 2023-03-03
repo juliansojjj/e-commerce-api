@@ -31,22 +31,6 @@ const order = await Order.findByPk(id);
 if (order) {
   res.json({ order });
 } else {
-  res.status(404).json({ msg: "No tiene direcciones" });
-}
-}
-
-export const getCurrentOrder = async (req:Request, res:Response)=>{
-
-  const { id } = req.params;
-  const data = id.split('---')
-  const orderId = data[0]
-  const orderType = data[1]
-  
-const order = await Order.findOne({where:{id:orderId,payment_option:orderType, user_discharged:0}})
-
-if (order) {
-  res.json({ order });
-} else {
   res.status(404).json({ msg: "No existe esa orden" });
 }
 }
@@ -72,6 +56,22 @@ const order = await Order.findByPk(id);
 
 if (order) {
   order.update({user_discharged:1})
+  .then(()=> res.json({ order }))
+  .catch(err=> res.status(404).json({ msg: err}))
+  
+} else {
+  res.status(404).json({ msg: "No existe esa orden" });
+}
+}
+
+export const updateOrderSucursal = async (req:Request, res:Response)=>{
+  const {body} = req;
+  const { id } = req.params;
+  console.log(body)
+const order = await Order.findByPk(id);
+
+if (order) {
+  order.update(body)
   .then(()=> res.json({ order }))
   .catch(err=> res.status(404).json({ msg: err}))
   

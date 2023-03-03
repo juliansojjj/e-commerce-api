@@ -40,6 +40,9 @@ const Order = connection_1.default.define('Order', {
     send_price: {
         type: sequelize_1.DataTypes.NUMBER
     },
+    sucursal: {
+        type: sequelize_1.DataTypes.STRING
+    },
 });
 exports.default = Order;
 //# sourceMappingURL=order.js.map

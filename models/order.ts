@@ -36,6 +36,9 @@ const Order = db.define('Order',{
     send_price:{
         type:DataTypes.NUMBER
     },
+    sucursal:{
+        type:DataTypes.STRING
+    },
 });
 
 export default Order;
