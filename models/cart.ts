@@ -8,6 +8,9 @@ const Cart = db.define('Cart',{
     item_id:{
         type:DataTypes.NUMBER
     },
+    order_item_id:{
+        type:DataTypes.NUMBER
+    },
     order_id:{
         type:DataTypes.STRING
     },

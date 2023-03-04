@@ -18,7 +18,7 @@ export const getProduct = async (req:Request, res:Response)=>{
   if (product) {
     res.json({ product });
   } else {
-    res.status(404).json({ msg: "No existe ese usuario" });
+    res.status(404).json({ msg: "No existe ese producto" });
   }
 }
 

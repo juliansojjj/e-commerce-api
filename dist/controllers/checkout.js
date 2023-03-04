@@ -17,6 +17,7 @@ const cart_1 = __importDefault(require("../models/cart"));
 const address_1 = __importDefault(require("../models/address"));
 const order_1 = __importDefault(require("../models/order"));
 const product_1 = __importDefault(require("../models/product"));
+const order_product_1 = __importDefault(require("../models/order_product"));
 /*
 - Cart controllers
 - Address controllers
@@ -179,8 +180,6 @@ exports.deleteAddress = deleteAddress;
 const postAfterOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { body } = req;
     const { id } = req.params;
-    console.log(id);
-    console.log(body);
     //comprobacion de campos
     if (!body.id ||
         !body.payment_option ||
@@ -196,12 +195,29 @@ const postAfterOrder = (req, res) => __awaiter(void 0, void 0, void 0, function*
             const promise = new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
                 const cart = yield cart_1.default.findOne({ where: { user_id: id, item_id: unit.productId, order_id: '0' } });
                 const product = yield product_1.default.findByPk(unit.productId);
-                yield (cart === null || cart === void 0 ? void 0 : cart.update({ order_id: body.id }).then(() => __awaiter(void 0, void 0, void 0, function* () { return yield (product === null || product === void 0 ? void 0 : product.update({ stock: product.dataValues.stock - unit.amount })); })).then(() => {
+                const orderProduct = order_product_1.default.create({
+                    item_id: product === null || product === void 0 ? void 0 : product.dataValues.id,
+                    order_id: body.id,
+                    name: product === null || product === void 0 ? void 0 : product.dataValues.name,
+                    price: product === null || product === void 0 ? void 0 : product.dataValues.price,
+                    type: product === null || product === void 0 ? void 0 : product.dataValues.type,
+                    image: product === null || product === void 0 ? void 0 : product.dataValues.image,
+                    serialNumber: product === null || product === void 0 ? void 0 : product.dataValues.serialNumber
+                }).then((res) => __awaiter(void 0, void 0, void 0, function* () {
+                    console.log('id ' + res.dataValues.id);
+                    yield (cart === null || cart === void 0 ? void 0 : cart.update({
+                        order_id: body.id,
+                        order_item_id: res.dataValues.id
+                    }));
+                }))
+                    //elimina stock del item
+                    .then(() => __awaiter(void 0, void 0, void 0, function* () { return yield (product === null || product === void 0 ? void 0 : product.update({ stock: product.dataValues.stock - unit.amount })); }))
+                    .then(() => {
                     const itemPrice = unit.amount * (product === null || product === void 0 ? void 0 : product.dataValues.price);
                     //suma precio por item al total
                     totalPrice += itemPrice;
                     resolve(true);
-                }));
+                });
             }));
             return promise;
         }))

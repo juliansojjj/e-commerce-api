@@ -12,9 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateOrderSucursal = exports.fulfillOrderPayment = exports.getOrderCart = exports.getUniqueOrder = exports.getUserOrders = void 0;
+exports.updateOrderSucursal = exports.fulfillOrderPayment = exports.getOrderProduct = exports.getOrderCart = exports.getUniqueOrder = exports.getUserOrders = void 0;
 const order_1 = __importDefault(require("../models/order"));
 const cart_1 = __importDefault(require("../models/cart"));
+const order_product_1 = __importDefault(require("../models/order_product"));
 /*
 - Cart controllers
 - Address controllers
@@ -53,6 +54,18 @@ const getOrderCart = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.getOrderCart = getOrderCart;
+const getOrderProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    console.log(id);
+    const orderProduct = yield order_product_1.default.findByPk(id);
+    if (orderProduct) {
+        res.json({ orderProduct });
+    }
+    else {
+        res.status(404).json({ msg: "No existe producto" });
+    }
+});
+exports.getOrderProduct = getOrderProduct;
 const fulfillOrderPayment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const order = yield order_1.default.findByPk(id);

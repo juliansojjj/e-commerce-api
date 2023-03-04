@@ -1,6 +1,7 @@
 import { request, Request, Response } from "express";
 import Order from "../models/order";
 import Cart from "../models/cart";
+import OrderProduct from "../models/order_product";
 
 /*
 - Cart controllers
@@ -45,6 +46,19 @@ if (order) {
   res.json({ order });
 } else {
   res.status(404).json({ msg: "No existe tal carrito" });
+}
+}
+
+export const getOrderProduct = async (req:Request, res:Response)=>{
+
+  const { id } = req.params;
+  console.log(id)
+const orderProduct = await OrderProduct.findByPk(id);
+
+if (orderProduct) {
+  res.json({ orderProduct });
+} else {
+  res.status(404).json({ msg: "No existe producto" });
 }
 }
 

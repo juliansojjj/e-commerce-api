@@ -3,6 +3,7 @@ import Cart from "../models/cart";
 import Address from '../models/address';
 import Order from "../models/order";
 import Product from "../models/product";
+import OrderProduct from "../models/order_product";
 
 /*
 - Cart controllers
@@ -177,8 +178,6 @@ try{
 export const postAfterOrder = async (req:Request, res:Response)=>{
   const {body} = req;
   const { id } = req.params;
-  console.log(id)
-  console.log(body)
   //comprobacion de campos
   if( !body.id ||
       !body.payment_option ||
@@ -193,7 +192,21 @@ export const postAfterOrder = async (req:Request, res:Response)=>{
       const promise = new Promise(async(resolve) => {
         const cart = await Cart.findOne({where:{user_id:id,item_id:unit.productId, order_id:'0'}})
         const product = await Product.findByPk(unit.productId);
-        await cart?.update({order_id:body.id})
+        const orderProduct = OrderProduct.create({
+          item_id:product?.dataValues.id,
+          order_id:body.id,
+          name:product?.dataValues.name,
+          price:product?.dataValues.price,
+          type:product?.dataValues.type,
+          image:product?.dataValues.image,
+          serialNumber:product?.dataValues.serialNumber
+        }).then(async(res)=>{
+          console.log('id ' + res.dataValues.id)
+          await cart?.update({
+            order_id:body.id,
+            order_item_id:res.dataValues.id})
+        })
+        
         //elimina stock del item
         .then(async()=>await product?.update({stock:product.dataValues.stock - unit.amount}))
         .then(()=>{

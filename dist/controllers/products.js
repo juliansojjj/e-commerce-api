@@ -30,7 +30,7 @@ const getProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         res.json({ product });
     }
     else {
-        res.status(404).json({ msg: "No existe ese usuario" });
+        res.status(404).json({ msg: "No existe ese producto" });
     }
 });
 exports.getProduct = getProduct;
