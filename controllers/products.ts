@@ -32,9 +32,21 @@ export const getProductByType = async (req:Request, res:Response)=>{
   if (product) {
     res.json({ product });
   } else {
-    res.status(404).json({ msg: "No existe ese usuario" });
+    res.status(404).json({ msg: "No existe ese producto" });
   }
 }
+
+export const getProductsBySN = async (req:Request, res:Response)=>{
+  const { SN } = req.params;
+  
+  const product = await Product.findAll({where:{serialNumber:SN}})
+  if (product) {
+    res.json({ product });
+  } else {
+    res.status(404).json({ msg: "No existe ese producto" });
+  }
+}
+
 export const postProduct = async (req:Request, res:Response)=>{
 
     const {body} = req;

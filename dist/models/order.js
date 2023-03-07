@@ -43,6 +43,9 @@ const Order = connection_1.default.define('Order', {
     sucursal: {
         type: sequelize_1.DataTypes.STRING
     },
+    sucursal_received: {
+        type: sequelize_1.DataTypes.BOOLEAN
+    },
 });
 exports.default = Order;
 //# sourceMappingURL=order.js.map

@@ -39,6 +39,9 @@ const Order = db.define('Order',{
     sucursal:{
         type:DataTypes.STRING
     },
+    sucursal_received:{
+        type:DataTypes.BOOLEAN
+    },
 });
 
 export default Order;
