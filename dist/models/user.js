@@ -20,6 +20,9 @@ const User = connection_1.default.define('User', {
     },
     oAuth: {
         type: sequelize_1.DataTypes.BOOLEAN
+    },
+    verified: {
+        type: sequelize_1.DataTypes.BOOLEAN
     }
 });
 exports.default = User;

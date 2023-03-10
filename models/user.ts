@@ -16,6 +16,9 @@ const User = db.define('User',{
     },
     oAuth:{
         type:DataTypes.BOOLEAN
+    },
+    verified:{
+        type:DataTypes.BOOLEAN
     }
 
 });

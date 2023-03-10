@@ -1,7 +1,7 @@
 import { request, Request, Response } from "express";
 import User from "../models/user";
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import nodemailer from 'nodemailer'
 
 type Usuario = {
     id:number;
@@ -21,17 +21,81 @@ export const addUser = async (req:Request,res:Response)=>{
         res.status(400).json({msg:'Complete los campos'});
     }
     else { 
+
+        let transport = nodemailer.createTransport({
+            host: "sandbox.smtp.mailtrap.io",
+            port: 2525,
+            auth: {
+              user: "cfa6b0e9678646",
+              pass: "ff07a70726955f"
+            }
+          });
+
         const mail = await User.findOne({where:{email:email}})
         if(mail){
             res.status(409).json({msg:'El usuario existe'});
         }
         else{
             const hashPass = await bcrypt.hash(password,10)
-            const user = await User.create({name,email,password:hashPass,oAuth:0});
+            const user = await User.create({name,email,password:hashPass,oAuth:0, verified:0});
             res.json({user});
+            
+            const message = {
+                from: 'noreply@flagon.com', // Sender address
+                to: email,         // List of recipients
+                subject: 'Verifique su cuenta', // Subject line
+                text: `Verificá tu cuenta para poder usarla:\nhttp://localhost:3000/verify/${user?.dataValues.id}?external=true`, // Plain text body
+                html:`
+                <body style="font-family:Trebuchet MS">
+                    <h2>Flagon</h2>
+                    <h3>Verificá tu nueva cuenta para empezar</h3>
+                    <a href="http://localhost:3000/verify/${user?.dataValues.id}?external=true">En este link</a>
+                </body>`
+            };
+            transport.sendMail(message, function(err, info) {
+                if (err) {
+                  console.log(err)
+                } else {
+                  console.log(info);
+                }
+            });
         }
     }
 } 
+
+export const checkVerifyUser = async (req:Request, res:Response)=>{
+    const { id } = req.params;
+    
+  try{
+    const user = await User.findByPk(id)
+    if (user){
+        res.json(user)
+    }
+    else return res.status(404).json({msg:'No existe tal usuario'});
+  }catch(err){
+    console.log(err);
+  }
+  
+  }
+
+export const verifyUser = async (req:Request, res:Response)=>{
+    const { id } = req.params;
+    
+  try{
+    const user = await User.findByPk(id)
+    if (user){
+        if(user.dataValues.verify == 1){
+            return res.status(404).json({msg:'El usuario ya está verificado'})
+        }
+        else await user.update({verified:1})
+        .then(()=>res.json(user));
+    }
+    else return res.status(404).json({msg:'No existe tal usuario'});
+  }catch(err){
+    console.log(err);
+  }
+  
+  }
 
 export const signInUser = async (req:Request,res:Response)=>{
     const {email,password} = req.body;

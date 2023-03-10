@@ -12,27 +12,91 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.oAuth = exports.deleteUser = exports.getUsers = exports.signInUser = exports.addUser = void 0;
+exports.oAuth = exports.deleteUser = exports.getUsers = exports.signInUser = exports.verifyUser = exports.checkVerifyUser = exports.addUser = void 0;
 const user_1 = __importDefault(require("../models/user"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const nodemailer_1 = __importDefault(require("nodemailer"));
 const addUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, email, password } = req.body;
     if (!name.trim() || !email.trim() || !password.trim()) {
         res.status(400).json({ msg: 'Complete los campos' });
     }
     else {
+        let transport = nodemailer_1.default.createTransport({
+            host: "sandbox.smtp.mailtrap.io",
+            port: 2525,
+            auth: {
+                user: "cfa6b0e9678646",
+                pass: "ff07a70726955f"
+            }
+        });
         const mail = yield user_1.default.findOne({ where: { email: email } });
         if (mail) {
             res.status(409).json({ msg: 'El usuario existe' });
         }
         else {
             const hashPass = yield bcrypt_1.default.hash(password, 10);
-            const user = yield user_1.default.create({ name, email, password: hashPass, oAuth: 0 });
+            const user = yield user_1.default.create({ name, email, password: hashPass, oAuth: 0, verified: 0 });
             res.json({ user });
+            const message = {
+                from: 'noreply@flagon.com',
+                to: email,
+                subject: 'Verifique su cuenta',
+                text: `Verificá tu cuenta para poder usarla:\nhttp://localhost:3000/verify/${user === null || user === void 0 ? void 0 : user.dataValues.id}?external=true`,
+                html: `
+                <body style="font-family:Trebuchet MS">
+                    <h2>Flagon</h2>
+                    <h3>Verificá tu nueva cuenta para empezar</h3>
+                    <a href="http://localhost:3000/verify/${user === null || user === void 0 ? void 0 : user.dataValues.id}?external=true">En este link</a>
+                </body>`
+            };
+            transport.sendMail(message, function (err, info) {
+                if (err) {
+                    console.log(err);
+                }
+                else {
+                    console.log(info);
+                }
+            });
         }
     }
 });
 exports.addUser = addUser;
+const checkVerifyUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    try {
+        const user = yield user_1.default.findByPk(id);
+        if (user) {
+            res.json(user);
+        }
+        else
+            return res.status(404).json({ msg: 'No existe tal usuario' });
+    }
+    catch (err) {
+        console.log(err);
+    }
+});
+exports.checkVerifyUser = checkVerifyUser;
+const verifyUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    try {
+        const user = yield user_1.default.findByPk(id);
+        if (user) {
+            if (user.dataValues.verify == 1) {
+                return res.status(404).json({ msg: 'El usuario ya está verificado' });
+            }
+            else
+                yield user.update({ verified: 1 })
+                    .then(() => res.json(user));
+        }
+        else
+            return res.status(404).json({ msg: 'No existe tal usuario' });
+    }
+    catch (err) {
+        console.log(err);
+    }
+});
+exports.verifyUser = verifyUser;
 const signInUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     if (!email.trim() || !password.trim()) {

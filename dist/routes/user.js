@@ -10,6 +10,8 @@ const validateToken_1 = __importDefault(require("./validateToken"));
 exports.router = (0, express_1.Router)();
 exports.router.get('/', validateToken_1.default, user_1.getUsers);
 exports.router.post('/', user_1.addUser);
+exports.router.get('/verify/:id', user_1.checkVerifyUser);
+exports.router.put('/verify/:id', user_1.verifyUser);
 exports.router.post('/sign', user_1.signInUser);
 exports.router.post('/oAuthSign', user_1.oAuth);
 exports.router.delete('/:id', validateToken_1.default, user_1.deleteUser);
