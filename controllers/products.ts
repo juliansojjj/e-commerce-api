@@ -1,4 +1,5 @@
 import { request, Request, Response } from "express";
+import { Op } from "sequelize";
 import Favorite from "../models/favorite";
 import Product from "../models/product";
 
@@ -19,6 +20,20 @@ export const getProduct = async (req:Request, res:Response)=>{
     res.json({ product });
   } else {
     res.status(404).json({ msg: "No existe ese producto" });
+  }
+}
+
+export const getProductByName = async (req:Request, res:Response)=>{
+  const { name } = req.params;
+  
+  const product = await Product.findAll({
+    where:{
+      name:{[Op.like]:`%${name}%`}
+    }})
+  if (product) {
+    res.json({ product });
+  } else {
+    res.status(404).json({ msg: "No hay ningún valor asociado" });
   }
 }
 

@@ -12,7 +12,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteProduct = exports.putProduct = exports.postProduct = exports.getProductsBySN = exports.getProductByType = exports.getProduct = exports.getProducts = void 0;
+exports.deleteProduct = exports.putProduct = exports.postProduct = exports.getProductsBySN = exports.getProductByType = exports.getProductByName = exports.getProduct = exports.getProducts = void 0;
+const sequelize_1 = require("sequelize");
 const favorite_1 = __importDefault(require("../models/favorite"));
 const product_1 = __importDefault(require("../models/product"));
 const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -34,6 +35,21 @@ const getProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.getProduct = getProduct;
+const getProductByName = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { name } = req.params;
+    const product = yield product_1.default.findAll({
+        where: {
+            name: { [sequelize_1.Op.like]: `%${name}%` }
+        }
+    });
+    if (product) {
+        res.json({ product });
+    }
+    else {
+        res.status(404).json({ msg: "No hay ningún valor asociado" });
+    }
+});
+exports.getProductByName = getProductByName;
 const getProductByType = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name } = req.params;
     const array = name.split('-');

@@ -5,6 +5,7 @@ const express_1 = require("express");
 const products_1 = require("../controllers/products");
 exports.router = (0, express_1.Router)();
 exports.router.get('/', products_1.getProducts);
+exports.router.get('/search/:name', products_1.getProductByName);
 exports.router.get('/:id', products_1.getProduct);
 exports.router.get('/models/:SN', products_1.getProductsBySN);
 exports.router.get('/model/:name', products_1.getProductByType);
