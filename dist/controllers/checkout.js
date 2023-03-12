@@ -211,7 +211,12 @@ const postAfterOrder = (req, res) => __awaiter(void 0, void 0, void 0, function*
                     }));
                 }))
                     //elimina stock del item
-                    .then(() => __awaiter(void 0, void 0, void 0, function* () { return yield (product === null || product === void 0 ? void 0 : product.update({ stock: product.dataValues.stock - unit.amount })); }))
+                    .then(() => __awaiter(void 0, void 0, void 0, function* () {
+                    return yield (product === null || product === void 0 ? void 0 : product.update({
+                        stock: product.dataValues.stock - unit.amount,
+                        units_sold: product.dataValues.units_sold + unit.amount
+                    }));
+                }))
                     .then(() => {
                     const itemPrice = unit.amount * (product === null || product === void 0 ? void 0 : product.dataValues.price);
                     //suma precio por item al total

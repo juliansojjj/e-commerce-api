@@ -24,6 +24,12 @@ const Product = connection_1.default.define('Product', {
     stock: {
         type: sequelize_1.DataTypes.NUMBER
     },
+    category: {
+        type: sequelize_1.DataTypes.STRING
+    },
+    units_sold: {
+        type: sequelize_1.DataTypes.NUMBER
+    },
     serialNumber: {
         type: sequelize_1.DataTypes.STRING
     },

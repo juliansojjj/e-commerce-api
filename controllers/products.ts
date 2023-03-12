@@ -2,6 +2,7 @@ import { request, Request, Response } from "express";
 import { Op } from "sequelize";
 import Favorite from "../models/favorite";
 import Product from "../models/product";
+import Category from '../models/category';
 
 export const getProducts = async(req:Request, res:Response)=>{
     const products = await Product.findAll();
@@ -29,6 +30,24 @@ export const getProductByName = async (req:Request, res:Response)=>{
   const product = await Product.findAll({
     where:{
       name:{[Op.like]:`%${name}%`}
+    }})
+  if (product) {
+    res.json({ product });
+  } else {
+    res.status(404).json({ msg: "No hay ningún valor asociado" });
+  }
+}
+
+export const getProductByNameInCategory = async (req:Request, res:Response)=>{
+  const { name } = req.params;
+  const array = name.split('---')
+  const category = array[0];
+  const search = array[1];
+  
+  const product = await Product.findAll({
+    where:{
+      category:category,
+      name:{[Op.like]:`%${search}%`}
     }})
   if (product) {
     res.json({ product });
@@ -78,6 +97,29 @@ export const postProduct = async (req:Request, res:Response)=>{
         console.log(err);
         res.status(500).json({ msg: "Revise the error" });
     }
+}
+
+export const getProductByCategory = async (req:Request, res:Response)=>{
+  const { name } = req.params;
+  
+  const product = await Product.findAll({
+    where:{
+      category:name
+    }})
+  if (product) {
+    res.json({ product });
+  } else {
+    res.status(404).json({ msg: "No hay ningún valor asociado" });
+  }
+}
+
+export const getProductCategories = async (req:Request, res:Response)=>{
+  const category = await Category.findAll()
+  if (category) {
+    res.json({ category });
+  } else {
+    res.status(404).json({ msg: "Hubo un error con las categorías" });
+  }
 }
 
 export const putProduct = async (req:Request, res:Response)=>{

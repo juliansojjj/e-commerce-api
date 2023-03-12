@@ -20,6 +20,12 @@ const Product = db.define('Product',{
     stock:{
         type:DataTypes.NUMBER
     },
+    category:{
+        type:DataTypes.STRING
+    },
+    units_sold:{
+        type:DataTypes.NUMBER
+    },
     serialNumber:{
         type:DataTypes.STRING
     },

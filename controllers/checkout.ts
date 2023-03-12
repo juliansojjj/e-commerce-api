@@ -208,7 +208,9 @@ export const postAfterOrder = async (req:Request, res:Response)=>{
         })
         
         //elimina stock del item
-        .then(async()=>await product?.update({stock:product.dataValues.stock - unit.amount}))
+        .then(async()=>await product?.update({
+          stock:product.dataValues.stock - unit.amount,
+          units_sold:product.dataValues.units_sold + unit.amount}))
         .then(()=>{
           const itemPrice = unit.amount * product?.dataValues.price
           //suma precio por item al total
